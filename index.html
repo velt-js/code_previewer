@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Code Preview</title>
+	<link rel="stylesheet" href="./style.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/skins/sunburst.css">
+	<script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+</head>
+
+<body>
+	<div id="app">
+		<div class="toolbar">
+			<p>Repository</p>
+			<div class="buttons">
+				<button onclick="showCode()">Code</button>
+				<button class="active" onclick="showPreview()">PREVIEW</button>
+			</div>
+		</div>
+		<div class="content">
+			<div id="repoStructure"></div>
+			<div id="codeBlock"></div>
+			<iframe id="previewFrame" allow="microphone; camera; display-capture"></iframe>
+		</div>
+	</div>
+	<script src="./index.js"></script>
+</body>
+
+</html>
