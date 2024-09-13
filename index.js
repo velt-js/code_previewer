@@ -248,6 +248,52 @@ function getQueryParam(param) {
     return urlParams.get(param);
 }
 
+// Function to hide toolbar
+function hideToolbar() {
+    const toolbar = document.querySelector('.toolbar');
+    if (toolbar) {
+        toolbar.style.display = 'none';
+    }
+}
+
+// Function to set the selected tab
+function setSelectedTab(tab) {
+    if (tab === 'Code') {
+        showCode();
+    } else if (tab === 'Preview') {
+        showPreview();
+    }
+}
+
+// Function to display helper text
+function showHelperText() {
+    const repoStructure = document.getElementById('repoStructure');
+    const codeBlock = document.getElementById('codeBlock');
+    const previewFrame = document.getElementById('previewFrame');
+    const toolbar = document.querySelector('.toolbar p');
+
+    toolbar.textContent = 'Helper';
+    
+    const helperText = `
+        <div style="padding: 20px; text-align: center; font-family: 'Inter', sans-serif; color: #B1C1FF; max-width: 600px; margin: 0 auto;">
+            <h2 style="margin-bottom: 20px; color: #64FF99;">Welcome to Code Preview</h2>
+            <p style="margin-bottom: 20px;">To use this tool, please provide the following URL parameters:</p>
+            <ul style="list-style-type: none; padding: 0; margin-bottom: 20px;">
+                <li style="margin-bottom: 10px;"><strong style="color: #FFA07A;">github</strong>: URL of the GitHub repository</li>
+                <li style="margin-bottom: 10px;"><strong style="color: #FFA07A;">preview</strong>: URL of the preview page</li>
+                <li style="margin-bottom: 10px;"><strong style="color: #FFA07A;">hideToolbar</strong> (optional): Set to 'true' to hide the toolbar</li>
+                <li style="margin-bottom: 10px;"><strong style="color: #FFA07A;">selectedTab</strong> (optional): Set to 'Code' or 'Preview' to select the initial tab</li>
+            </ul>
+            <p style="margin-bottom: 20px;">Example URL:</p>
+            <code style="display: block; background-color: #1E3187; padding: 15px; border-radius: 5px; word-break: break-all; font-family: 'Fira Code', monospace; font-size: 12px;">https://yourpage.com?github=https://github.com/user/repo&preview=https://preview-url.com&hideToolbar=true&selectedTab=Code</code>
+        </div>
+    `;
+
+    repoStructure.innerHTML = helperText;
+    codeBlock.innerHTML = '';
+    previewFrame.srcdoc = helperText;
+}
+
 // Main function to initialize the viewer
 async function initRepoViewer(repoUrl, options = {}) {
     const [, , , owner, repo] = repoUrl.split('/');
@@ -317,22 +363,28 @@ function cacheRenderedHtml(fileName, renderedHtml) {
 // Usage
 const repoUrl = getQueryParam('github');
 const previewUrl = getQueryParam('preview');
+const hideToolbarParam = getQueryParam('hideToolbar');
+const selectedTab = getQueryParam('selectedTab');
 
-if (repoUrl) {
+if (hideToolbarParam === 'true') {
+    hideToolbar();
+}
+
+if (repoUrl && previewUrl) {
     const options = {
         ignoreFiles: ['.gitignore', 'README.md', 'package-lock.json', '*.spec.ts', 'test/*', '.vscode', '.editorconfig'],
         defaultFile: 'src/app/app.component.ts' // Example of a nested default file
     };
 
     initRepoViewer(repoUrl, options);
-} else {
-    console.error('No GitHub URL provided');
-}
-
-if (previewUrl) {
     document.getElementById('previewFrame').src = previewUrl;
+
+    // Set the selected tab
+    if (selectedTab === 'Code' || selectedTab === 'Preview') {
+        setSelectedTab(selectedTab);
+    }
 } else {
-    console.error('No preview URL provided');
+    showHelperText();
 }
 
 const toggleButtons = document.querySelectorAll('.buttons')[0].children;
@@ -340,19 +392,19 @@ const toggleButtons = document.querySelectorAll('.buttons')[0].children;
 let isPreviewOpen = true;
 
 function showPreview() {
-	document.getElementById('codeBlock').style.display = 'none';
-	document.getElementById('repoStructure').style.display = 'none';
-	document.getElementById('previewFrame').style.display = 'block';
-	isPreviewOpen = true;
-	toggleButtons[0].classList.remove('active');
-	toggleButtons[1].classList.add('active');
+    document.getElementById('codeBlock').style.display = 'none';
+    document.getElementById('repoStructure').style.display = 'none';
+    document.getElementById('previewFrame').style.display = 'block';
+    isPreviewOpen = true;
+    toggleButtons[0].classList.remove('active');
+    toggleButtons[1].classList.add('active');
 }
 
 function showCode() {
-	document.getElementById('codeBlock').style.display = 'block';
-	document.getElementById('repoStructure').style.display = 'block';
-	document.getElementById('previewFrame').style.display = 'none';
-	isPreviewOpen = false;
-	toggleButtons[1].classList.remove('active');
-	toggleButtons[0].classList.add('active');
+    document.getElementById('codeBlock').style.display = 'block';
+    document.getElementById('repoStructure').style.display = 'block';
+    document.getElementById('previewFrame').style.display = 'none';
+    isPreviewOpen = false;
+    toggleButtons[1].classList.remove('active');
+    toggleButtons[0].classList.add('active');
 }
