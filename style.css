@@ -14,11 +14,13 @@ html {
 	padding: 0;
 	font-family: 'SF Pro', Helvetica, 'Inter', -apple-system, Tahoma, Geneva, Verdana, sans-serif;
 	height: 100%;
-	background-color: #1A2A7C;
 	color: #d4d4d4;
+	background-color: transparent;
 }
 
 #app {
+
+	background-color: #1A2A7C;
 	display: flex;
 	flex-direction: column;
 	height: 100%;
