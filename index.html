@@ -20,6 +20,19 @@
 			</div>
 		</div>
 		<div class="content">
+			<div class="helper-container">
+				<h2>Welcome to Code Preview</h2>
+				<p>To use this tool, please provide the following URL parameters:</p>
+				<ul>
+					<li><strong>github</strong>: URL of the GitHub repository</li>
+					<li><strong>preview</strong>: URL of the preview page</li>
+					<li><strong>hideToolbar</strong> (optional): Set to 'true' to hide the toolbar</li>
+					<li><strong>selectedTab</strong> (optional): Set to 'Code' or 'Preview' to select the initial tab
+					</li>
+				</ul>
+				<p>Example URL:</p>
+				<code>https://yourpage.com?github=https://github.com/user/repo&preview=https://preview-url.com&hideToolbar=true&selectedTab=Code</code>
+			</div>
 			<div id="repoStructure"></div>
 			<div id="codeBlock"></div>
 			<iframe id="previewFrame" allow="microphone; camera; display-capture"></iframe>

@@ -36,10 +36,8 @@ html {
 	top: 50%;
 	transform: translate(-50%, -50%);
 
-	width: calc(100% - 16px);
-	height: calc(100% - 16px);
-	max-width: calc(100% - 16px);
-	max-height: calc(100% - 16px);
+	width: 100%;
+	height: 100%;
 }
 
 #app>.content {
@@ -386,7 +384,7 @@ li.L9 {
 	display: block;
 }
 
-.folder-open > .folder{
+.folder-open>.folder {
 	color: #fff;
 }
 
@@ -434,7 +432,8 @@ li.L9 {
 }
 
 .toolbar button {
-	background-color: #1E3187; /* Slightly lighter blue for the active button */
+	background-color: #1E3187;
+	/* Slightly lighter blue for the active button */
 	color: white;
 	border: none;
 	padding: 6px 16px;
@@ -460,4 +459,56 @@ li.L9 {
 .toolbar p {
 	font-size: 12px;
 	font-weight: 500;
+}
+
+
+.helper-container {
+	padding: 20px;
+	text-align: center;
+	font-family: 'Inter', sans-serif;
+	color: #B1C1FF;
+	max-width: 600px;
+	margin: 0 auto;
+	
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+
+	h2 {
+		margin-bottom: 20px;
+		color: #64FF99;
+	}
+
+	p {
+		margin-bottom: 20px;
+	}
+
+	ul {
+		list-style-type: none;
+		padding: 0;
+		margin-bottom: 20px;
+
+		li {
+			margin-bottom: 10px;
+
+			strong {
+				color: #FFA07A;
+			}
+		}
+	}
+
+	code {
+		display: block;
+		background-color: #1E3187;
+		padding: 15px;
+		border-radius: 5px;
+		word-break: break-all;
+		font-family: 'Fira Code', monospace;
+		font-size: 12px;
+
+	}
+
+
+
 }
