@@ -187,7 +187,7 @@ function displayFileContent(fileName, content, url) {
 		default:
 			contentHtml = `
                 <h3>${fileName}</h3>
-                <pre class="prettyprint linenums">${escapeHtml(content.trimStart())}</pre>
+                <pre class="prettyprint linenums scrollable-content">${escapeHtml(content.trimStart())}</pre>
             `;
 			break;
 	}

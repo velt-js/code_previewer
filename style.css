@@ -18,6 +18,18 @@ html {
 	background-color: transparent;
 }
 
+.scrollable-content {
+	overflow: auto;
+
+	/* Hide scrollbar */
+	-ms-overflow-style: none;
+	scrollbar-width: none;
+}
+
+.scrollable-content::-webkit-scrollbar {
+	display: none;
+}
+
 #app {
 
 	background-color: #1A2A7C;
@@ -294,6 +306,10 @@ li.L8 {
 	height: -webkit-fill-available;
 }
 
+.linenums {
+	width: fit-content;
+}
+
 .linenums>li {
 	width: max-content;
 }
@@ -469,7 +485,7 @@ li.L9 {
 	color: #B1C1FF;
 	max-width: 600px;
 	margin: 0 auto;
-	
+
 	position: absolute;
 	top: 50%;
 	left: 50%;
