@@ -3,6 +3,7 @@
 // Global variables
 let isPreviewOpen = true;
 const toggleButtons = document.querySelectorAll('.buttons')[0].children;
+const CACHE_ENABLED = false;
 
 // Utility functions
 function getQueryParam(param) {
@@ -24,7 +25,7 @@ async function fetchRepoContents(owner, repo, path = '') {
 	const cacheKey = `repo_${owner}_${repo}_${path}`;
 	const cachedData = localStorage.getItem(cacheKey);
 
-	if (cachedData) {
+	if (cachedData && CACHE_ENABLED) {
 		return JSON.parse(cachedData);
 	}
 
@@ -32,7 +33,10 @@ async function fetchRepoContents(owner, repo, path = '') {
 	const response = await fetch(apiUrl);
 	const data = await response.json();
 
-	localStorage.setItem(cacheKey, JSON.stringify(data));
+	if (CACHE_ENABLED) {
+		localStorage.setItem(cacheKey, JSON.stringify(data));
+	}
+
 	return data;
 }
 
@@ -40,14 +44,17 @@ async function fetchFileContent(url) {
 	const cacheKey = `file_${url}`;
 	const cachedContent = localStorage.getItem(cacheKey);
 
-	if (cachedContent) {
+	if (cachedContent && CACHE_ENABLED) {
 		return cachedContent;
 	}
 
 	const response = await fetch(url);
 	const content = await response.text();
 
-	localStorage.setItem(cacheKey, content);
+	if (CACHE_ENABLED) {
+		localStorage.setItem(cacheKey, content);
+	}
+
 	return content;
 }
 
@@ -161,7 +168,7 @@ function displayFileContent(fileName, content, url) {
 	const fileExtension = fileName.split('.').pop().toLowerCase();
 
 	const cachedHtml = localStorage.getItem(`rendered_${fileName}`);
-	if (cachedHtml) {
+	if (cachedHtml && CACHE_ENABLED) {
 		codeBlock.innerHTML = cachedHtml;
 		return;
 	}
@@ -198,12 +205,16 @@ function displayFileContent(fileName, content, url) {
 		PR.prettyPrint();
 	}
 
-	cacheRenderedHtml(fileName, codeBlock.innerHTML);
+	if (CACHE_ENABLED) {
+		cacheRenderedHtml(fileName, codeBlock.innerHTML);
+	}	
 }
 
 function cacheRenderedHtml(fileName, renderedHtml) {
 	const cacheKey = `rendered_${fileName}`;
-	localStorage.setItem(cacheKey, renderedHtml);
+	if (CACHE_ENABLED) {
+		localStorage.setItem(cacheKey, renderedHtml);
+	}
 }
 
 // UI control functions
@@ -286,7 +297,7 @@ async function openDefaultFile(owner, repo, filePath) {
 			await folderSpan.click();
 			currentElement = folderSpan.closest('li');
 		} else {
-			console.error(`Folder not found: ${pathParts[i]}`);
+			// console.error(`Folder not found: ${pathParts[i]}`);
 			return;
 		}
 	}
@@ -300,7 +311,7 @@ async function openDefaultFile(owner, repo, filePath) {
 			fileSpan.click();
 		}, 300);
 	} else {
-		console.error(`File not found: ${fileName}`);
+		// console.error(`File not found: ${fileName}`);
 	}
 }
 
