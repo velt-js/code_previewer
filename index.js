@@ -5,6 +5,10 @@ let isPreviewOpen = true;
 const toggleButtons = document.querySelectorAll('.buttons')[0].children;
 const CACHE_ENABLED = false;
 
+if(!CACHE_ENABLED){
+	localStorage.clear();
+}
+
 // Utility functions
 function getQueryParam(param) {
 	const urlParams = new URLSearchParams(window.location.search);
