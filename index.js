@@ -4,24 +4,165 @@
 let isPreviewOpen = true;
 const toggleButtons = document.querySelectorAll('.buttons')[0].children;
 const CACHE_ENABLED = false;
+const REPO_URL_INPUT_ID = 'repoUrlInput';
+const PREVIEW_URL_INPUT_ID = 'previewUrlInput';
+const LOAD_REPO_BUTTON_ID = 'loadRepoButton';
+const REPO_LOAD_ERROR_ID = 'repoLoadError';
+const DEFAULT_LOAD_REPOSITORY_BUTTON_TEXT = 'Load';
+const THEME_COLOR_INPUT_ID = 'themeColorInput';
+const THEME_COLOR_STORAGE_KEY = 'themeColor';
+const DEFAULT_THEME_COLOR = '#1A2A7C';
+const THEME_COLOR_QUERY_PARAM = 'themeColor';
 
-if(!CACHE_ENABLED){
-	localStorage.clear();
+/**
+ * Clears cached repo/file HTML from localStorage without removing user settings.
+ *
+ * @returns {void}
+ */
+function clearCacheStorage() {
+    try {
+        const keysToRemove = [];
+        for (let keyIndex = 0; keyIndex < localStorage.length; keyIndex++) {
+            const storageKey = localStorage.key(keyIndex);
+            if (!storageKey) {
+                continue;
+            }
+
+            if (storageKey.startsWith('repo_') || storageKey.startsWith('file_') || storageKey.startsWith('rendered_')) {
+                keysToRemove.push(storageKey);
+            }
+        }
+
+        keysToRemove.forEach((storageKey) => {
+            try {
+                localStorage.removeItem(storageKey);
+            } catch (removeError) {
+                // no-op
+            }
+        });
+    } catch (error) {
+        // no-op
+    }
+}
+
+if (!CACHE_ENABLED) {
+    clearCacheStorage();
 }
 
 // Utility functions
 function getQueryParam(param) {
-	const urlParams = new URLSearchParams(window.location.search);
-	return urlParams.get(param);
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(param);
 }
 
 function escapeHtml(unsafe) {
-	return unsafe
-		.replace(/&/g, "&amp;")
-		.replace(/</g, "&lt;")
-		.replace(/>/g, "&gt;")
-		.replace(/"/g, "&quot;")
-		.replace(/'/g, "&#039;");
+    return unsafe
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+/**
+ * Applies the theme color to the app via CSS variables.
+ *
+ * @param {string} themeColor
+ * @returns {void}
+ */
+function applyThemeColor(themeColor) {
+    try {
+        const normalizedThemeColor = (themeColor || '').trim() || DEFAULT_THEME_COLOR;
+        document.documentElement.style.setProperty('--app-bg', normalizedThemeColor);
+    } catch (error) {
+        // no-op
+    }
+}
+
+/**
+ * Initializes the helper view theme color picker.
+ *
+ * @returns {void}
+ */
+function initializeThemeColorPicker() {
+    try {
+        const themeColorInput = document.getElementById(THEME_COLOR_INPUT_ID);
+        if (!themeColorInput) {
+            return;
+        }
+
+        const storedThemeColor = localStorage.getItem(THEME_COLOR_STORAGE_KEY);
+        const initialThemeColor = (storedThemeColor || '').trim() || DEFAULT_THEME_COLOR;
+
+        themeColorInput.value = initialThemeColor;
+        applyThemeColor(initialThemeColor);
+
+        themeColorInput.addEventListener('input', (event) => {
+            try {
+                const selectedThemeColor = event && event.target ? event.target.value : '';
+                if (selectedThemeColor) {
+                    localStorage.setItem(THEME_COLOR_STORAGE_KEY, selectedThemeColor);
+                    applyThemeColor(selectedThemeColor);
+                }
+            } catch (innerError) {
+                // no-op
+            }
+        });
+    } catch (error) {
+        // no-op
+    }
+}
+
+/**
+ * Normalizes a theme color query param value to a hex color string.
+ * Supports `#RRGGBB` or `RRGGBB`.
+ *
+ * @param {string} themeColorValue
+ * @returns {string|null}
+ */
+function normalizeThemeColor(themeColorValue) {
+    try {
+        const trimmedValue = (themeColorValue || '').trim();
+        if (!trimmedValue) {
+            return null;
+        }
+
+        const withHash = trimmedValue.startsWith('#') ? trimmedValue : `#${trimmedValue}`;
+        if (!/^#[0-9a-fA-F]{6}$/.test(withHash)) {
+            return null;
+        }
+
+        return withHash.toUpperCase();
+    } catch (error) {
+        return null;
+    }
+}
+
+/**
+ * Updates the current URL query params without reloading the page.
+ *
+ * @param {{ github?: string, preview?: string, selectedTab?: string, hideToolbar?: string, themeColor?: string }} updatedParams
+ * @returns {void}
+ */
+function updateUrlQueryParams(updatedParams) {
+    try {
+        const currentUrl = new URL(window.location.href);
+        const urlParams = currentUrl.searchParams;
+
+        Object.keys(updatedParams || {}).forEach((paramName) => {
+            const paramValue = updatedParams[paramName];
+            if (paramValue === null || paramValue === undefined || paramValue === '') {
+                urlParams.delete(paramName);
+            } else {
+                urlParams.set(paramName, String(paramValue));
+            }
+        });
+
+        const nextUrl = `${currentUrl.pathname}?${urlParams.toString()}`;
+        window.history.replaceState({}, '', nextUrl);
+    } catch (error) {
+        // no-op
+    }
 }
 
 // API and data fetching functions
@@ -272,51 +413,237 @@ function showCode() {
 	toggleButtons[0].classList.add('active');
 }
 
+/**
+ * Normalizes a user-provided GitHub repo value into a full repo URL.
+ * Accepts either `https://github.com/owner/repo` or `owner/repo`.
+ *
+ * @param {string} githubRepositoryValue
+ * @returns {string|null}
+ */
+function normalizeGithubRepoUrl(githubRepositoryValue) {
+    try {
+        const trimmedValue = (githubRepositoryValue || '').trim();
+        if (!trimmedValue) {
+            return null;
+        }
+
+        if (trimmedValue.startsWith('http://') || trimmedValue.startsWith('https://')) {
+            const parsedUrl = new URL(trimmedValue);
+            if (!parsedUrl.hostname.includes('github.com')) {
+                return null;
+            }
+
+            const repoPath = parsedUrl.pathname.replace(/\/+$/, '').replace(/\.git$/, '');
+            const repoPathParts = repoPath.split('/').filter(Boolean);
+            if (repoPathParts.length < 2) {
+                return null;
+            }
+
+            return `https://github.com/${repoPathParts[0]}/${repoPathParts[1]}`;
+        }
+
+        const shorthandMatch = trimmedValue.match(/^([^/\s]+)\/([^/\s]+)$/);
+        if (shorthandMatch) {
+            return `https://github.com/${shorthandMatch[1].replace(/\.git$/, '')}/${shorthandMatch[2].replace(/\.git$/, '')}`;
+        }
+
+        return null;
+    } catch (error) {
+        return null;
+    }
+}
+
+/**
+ * Normalizes a user-provided preview URL to an absolute https/http URL.
+ *
+ * @param {string} previewUrlValue
+ * @returns {string|null}
+ */
+function normalizePreviewUrl(previewUrlValue) {
+    try {
+        const trimmedValue = (previewUrlValue || '').trim();
+        if (!trimmedValue) {
+            return '';
+        }
+
+        if (!trimmedValue.startsWith('http://') && !trimmedValue.startsWith('https://')) {
+            return null;
+        }
+
+        const parsedUrl = new URL(trimmedValue);
+        return parsedUrl.href;
+    } catch (error) {
+        return null;
+    }
+}
+
+/**
+ * Updates the helper view error message text.
+ *
+ * @param {string} errorMessage
+ * @returns {void}
+ */
+function setRepoLoadError(errorMessage) {
+    try {
+        const errorElement = document.getElementById(REPO_LOAD_ERROR_ID);
+        if (errorElement) {
+            errorElement.textContent = errorMessage || '';
+        }
+    } catch (error) {
+        // no-op
+    }
+}
+
+/**
+ * Loads a repository from the helper input field.
+ *
+ * @returns {Promise<void>}
+ */
+async function loadRepositoryFromHelperInput() {
+    try {
+        setRepoLoadError('');
+
+        const repoUrlInput = document.getElementById(REPO_URL_INPUT_ID);
+        const previewUrlInput = document.getElementById(PREVIEW_URL_INPUT_ID);
+        const loadRepositoryButton = document.getElementById(LOAD_REPO_BUTTON_ID);
+        const themeColorInput = document.getElementById(THEME_COLOR_INPUT_ID);
+
+        const rawInputValue = repoUrlInput ? repoUrlInput.value : '';
+        const normalizedRepoUrl = normalizeGithubRepoUrl(rawInputValue);
+
+        const rawPreviewValue = previewUrlInput ? previewUrlInput.value : '';
+        const normalizedPreviewUrl = normalizePreviewUrl(rawPreviewValue);
+
+        const selectedThemeColor = themeColorInput ? themeColorInput.value : '';
+        const normalizedThemeColor = normalizeThemeColor(selectedThemeColor) || DEFAULT_THEME_COLOR;
+
+        if (!normalizedRepoUrl && !normalizedPreviewUrl) {
+            setRepoLoadError('Please enter a GitHub repository URL and/or a preview/output URL.');
+            return;
+        }
+
+        if (rawPreviewValue && rawPreviewValue.trim() && normalizedPreviewUrl === null) {
+            setRepoLoadError('Please enter a valid preview/output URL (must start with https:// or http://).');
+            return;
+        }
+
+        if (rawInputValue && rawInputValue.trim() && !normalizedRepoUrl) {
+            setRepoLoadError('Please enter a valid GitHub repository URL (e.g. https://github.com/owner/repo) or owner/repo.');
+            return;
+        }
+
+        if (loadRepositoryButton) {
+            loadRepositoryButton.disabled = true;
+            loadRepositoryButton.textContent = 'Loading...';
+        }
+
+        applyThemeColor(normalizedThemeColor);
+        try {
+            localStorage.setItem(THEME_COLOR_STORAGE_KEY, normalizedThemeColor);
+        } catch (storageError) {
+            // no-op
+        }
+
+        showHelperText(false);
+
+        if (normalizedPreviewUrl) {
+            const previewFrame = document.getElementById('previewFrame');
+            if (previewFrame) {
+                previewFrame.src = normalizedPreviewUrl;
+            }
+        }
+
+        if (normalizedRepoUrl) {
+            const options = {
+                ignoreFiles: ['.gitignore', 'README.md', 'package-lock.json', '*.spec.ts', 'test/*', '.vscode', '.editorconfig'],
+                defaultFile: 'src/app/app.component.ts'
+            };
+
+            await initRepoViewer(normalizedRepoUrl, options);
+        } else {
+            const toolbarTitle = document.querySelector('.toolbar p');
+            if (toolbarTitle) {
+                toolbarTitle.textContent = 'Preview';
+            }
+        }
+
+        updateUrlQueryParams({
+            github: normalizedRepoUrl || '',
+            preview: normalizedPreviewUrl || '',
+            selectedTab: normalizedPreviewUrl ? 'Preview' : 'Code',
+            [THEME_COLOR_QUERY_PARAM]: normalizedThemeColor.replace('#', '')
+        });
+
+        if (normalizedPreviewUrl) {
+            showPreview();
+        } else {
+            showCode();
+        }
+    } catch (error) {
+        setRepoLoadError('Could not load. Please check the repository/preview URLs and that the repo is public.');
+        showHelperText(true);
+    } finally {
+        const loadRepositoryButton = document.getElementById(LOAD_REPO_BUTTON_ID);
+        if (loadRepositoryButton) {
+            loadRepositoryButton.disabled = false;
+            loadRepositoryButton.textContent = DEFAULT_LOAD_REPOSITORY_BUTTON_TEXT;
+        }
+    }
+}
+
 // Main initialization function
 async function initRepoViewer(repoUrl, options = {}) {
-	const [, , , owner, repo] = repoUrl.split('/');
-	const repoContents = await fetchRepoContents(owner, repo);
-	const container = document.getElementById('repoStructure');
+    const [, , , owner, repo] = repoUrl.split('/');
+    const repoContents = await fetchRepoContents(owner, repo);
+    const container = document.getElementById('repoStructure');
+    const codeBlock = document.getElementById('codeBlock');
 
-	document.querySelector('.toolbar p').textContent = repo;
+    if (container) {
+        container.innerHTML = '';
+    }
+    if (codeBlock) {
+        codeBlock.innerHTML = '';
+    }
 
-	await new Promise(resolve => {
-		createFolderStructure(container, repoContents, owner, repo, options, '', resolve);
-	});
+    document.querySelector('.toolbar p').textContent = repo;
 
-	if (options.defaultFile) {
-		await openDefaultFile(owner, repo, options.defaultFile);
-	}
+    await new Promise(resolve => {
+        createFolderStructure(container, repoContents, owner, repo, options, '', resolve);
+    });
+
+    if (options.defaultFile) {
+        await openDefaultFile(owner, repo, options.defaultFile);
+    }
 }
 
 async function openDefaultFile(owner, repo, filePath) {
-	const pathParts = filePath.split('/');
-	let currentElement = document.getElementById('repoStructure');
+    const pathParts = filePath.split('/');
+    let currentElement = document.getElementById('repoStructure');
 
-	for (let i = 0; i < pathParts.length - 1; i++) {
-		const folderSpan = Array.from(currentElement.querySelectorAll('span.folder'))
-			.find(span => span.textContent.trim() === pathParts[i]);
+    for (let i = 0; i < pathParts.length - 1; i++) {
+        const folderSpan = Array.from(currentElement.querySelectorAll('span.folder'))
+            .find(span => span.textContent.trim() === pathParts[i]);
 
-		if (folderSpan) {
-			await folderSpan.click();
-			currentElement = folderSpan.closest('li');
-		} else {
-			// console.error(`Folder not found: ${pathParts[i]}`);
-			return;
-		}
-	}
+        if (folderSpan) {
+            await folderSpan.click();
+            currentElement = folderSpan.closest('li');
+        } else {
+            // console.error(`Folder not found: ${pathParts[i]}`);
+            return;
+        }
+    }
 
-	const fileName = pathParts[pathParts.length - 1];
-	const fileSpan = Array.from(currentElement.querySelectorAll('span.file'))
-		.find(span => span.textContent.trim() === fileName);
+    const fileName = pathParts[pathParts.length - 1];
+    const fileSpan = Array.from(currentElement.querySelectorAll('span.file'))
+        .find(span => span.textContent.trim() === fileName);
 
-	if (fileSpan) {
-		setTimeout(() => {
-			fileSpan.click();
-		}, 300);
-	} else {
-		// console.error(`File not found: ${fileName}`);
-	}
+    if (fileSpan) {
+        setTimeout(() => {
+            fileSpan.click();
+        }, 300);
+    } else {
+        // console.error(`File not found: ${fileName}`);
+    }
 }
 
 // Main execution
@@ -324,24 +651,71 @@ const repoUrl = getQueryParam('github');
 const previewUrl = getQueryParam('preview');
 const hideToolbarParam = getQueryParam('hideToolbar');
 const selectedTab = getQueryParam('selectedTab');
+const themeColorParam = getQueryParam(THEME_COLOR_QUERY_PARAM);
 
 if (hideToolbarParam === 'true') {
-	hideToolbar();
+    hideToolbar();
 }
 
-if (repoUrl && previewUrl) {
-	showHelperText(false);
-	const options = {
-		ignoreFiles: ['.gitignore', 'README.md', 'package-lock.json', '*.spec.ts', 'test/*', '.vscode', '.editorconfig'],
-		defaultFile: 'src/app/app.component.ts'
-	};
+const loadRepositoryButton = document.getElementById(LOAD_REPO_BUTTON_ID);
+const repoUrlInput = document.getElementById(REPO_URL_INPUT_ID);
+const previewUrlInput = document.getElementById(PREVIEW_URL_INPUT_ID);
+initializeThemeColorPicker();
 
-	initRepoViewer(repoUrl, options);
-	document.getElementById('previewFrame').src = previewUrl;
+const initialThemeColor = normalizeThemeColor(themeColorParam);
+if (initialThemeColor) {
+    applyThemeColor(initialThemeColor);
+    try {
+        localStorage.setItem(THEME_COLOR_STORAGE_KEY, initialThemeColor);
+    } catch (storageError) {
+        // no-op
+    }
+}
 
-	if (selectedTab === 'Code' || selectedTab === 'Preview') {
-		setSelectedTab(selectedTab);
-	}
+if (loadRepositoryButton) {
+    loadRepositoryButton.addEventListener('click', () => {
+        loadRepositoryFromHelperInput();
+    });
+}
+
+if (repoUrlInput) {
+    repoUrlInput.addEventListener('keydown', (event) => {
+        if (event && event.key === 'Enter') {
+            loadRepositoryFromHelperInput();
+        }
+    });
+}
+
+if (previewUrlInput) {
+    previewUrlInput.addEventListener('keydown', (event) => {
+        if (event && event.key === 'Enter') {
+            loadRepositoryFromHelperInput();
+        }
+    });
+}
+
+if (repoUrl || previewUrl) {
+    showHelperText(false);
+    if (repoUrl) {
+        const options = {
+            ignoreFiles: ['.gitignore', 'README.md', 'package-lock.json', '*.spec.ts', 'test/*', '.vscode', '.editorconfig'],
+            defaultFile: 'src/app/app.component.ts'
+        };
+
+        initRepoViewer(repoUrl, options);
+    }
+
+    if (previewUrl) {
+        document.getElementById('previewFrame').src = previewUrl;
+    }
+
+    if (selectedTab === 'Code' || selectedTab === 'Preview') {
+        setSelectedTab(selectedTab);
+    } else if (previewUrl) {
+        showPreview();
+    } else if (!previewUrl) {
+        showCode();
+    }
 } else {
-	showHelperText();
+    showHelperText();
 }

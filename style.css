@@ -3,259 +3,259 @@
 
 
 * {
-	padding: 0;
-	margin: 0;
-	box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
 }
 
 body,
 html {
-	margin: 0;
-	padding: 0;
-	font-family: 'SF Pro', Helvetica, 'Inter', -apple-system, Tahoma, Geneva, Verdana, sans-serif;
-	height: 100%;
-	color: #d4d4d4;
-	background-color: transparent;
+    margin: 0;
+    padding: 0;
+    font-family: 'SF Pro', Helvetica, 'Inter', -apple-system, Tahoma, Geneva, Verdana, sans-serif;
+    height: 100%;
+    color: #d4d4d4;
+    background-color: transparent;
 }
 
 .scrollable-content {
-	overflow: auto;
+    overflow: auto;
 
-	/* Hide scrollbar */
-	-ms-overflow-style: none;
-	scrollbar-width: none;
+    /* Hide scrollbar */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }
 
 .scrollable-content::-webkit-scrollbar {
-	display: none;
+    display: none;
 }
 
 #app {
 
-	background-color: #1A2A7C;
-	display: flex;
-	flex-direction: column;
-	height: 100%;
-	width: 100%;
-	/* max-height: 800px; */
-	overflow: hidden;
-	/* width: 1200px; */
-	border: 1px solid rgba(255, 255, 255, 0.1);
-	border-radius: 0.75rem;
+    background-color: var(--app-bg, #1A2A7C);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    /* max-height: 800px; */
+    overflow: hidden;
+    /* width: 1200px; */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 0.75rem;
 
-	position: absolute;
-	left: 50%;
-	top: 50%;
-	transform: translate(-50%, -50%);
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
 
-	width: 100%;
-	height: 100%;
+    width: 100%;
+    height: 100%;
 }
 
 #app>.content {
-	display: flex;
-	flex-direction: row;
-	height: 100%;
-	border: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 iframe {
-	width: 100%;
-	height: 100%;
-	border: none;
+    width: 100%;
+    height: 100%;
+    border: none;
 }
 
 #repoStructure {
-	width: 240px;
-	/* Initial width */
-	min-width: 280px;
-	/* Ensure it doesn't get smaller than this */
-	max-width: 40%;
-	/* Prevent it from taking up too much space */
-	/* background-color: #162664; */
-	overflow-y: auto;
-	padding: 8px;
-	font-size: 13px;
-	border-radius: 0.75rem;
-	resize: horizontal;
-	/* Allow user to resize horizontally */
-	display: none;
+    width: 240px;
+    /* Initial width */
+    min-width: 280px;
+    /* Ensure it doesn't get smaller than this */
+    max-width: 40%;
+    /* Prevent it from taking up too much space */
+    /* background-color: #162664; */
+    overflow-y: auto;
+    padding: 8px;
+    font-size: 13px;
+    border-radius: 0.75rem;
+    resize: horizontal;
+    /* Allow user to resize horizontally */
+    display: none;
 }
 
 #repoStructure>ul>li>span {
-	padding-left: 1rem;
+    padding-left: 1rem;
 }
 
 #codeBlock {
-	flex-grow: 1;
-	overflow-y: auto;
-	width: 100%;
-	border-left: 1px solid rgba(255, 255, 255, 0.1);
-	display: none;
+    flex-grow: 1;
+    overflow-y: auto;
+    width: 100%;
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+    display: none;
 }
 
 #codeBlock>h3 {
-	padding-bottom: 1rem;
-	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-	font-size: 12px;
-	font-family: Fira Code, monospace;
-	font-weight: 400;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 12px;
+    font-family: Fira Code, monospace;
+    font-weight: 400;
 
-	position: sticky;
-	top: 0;
-	background: #192a7c;
-	padding: 1rem;
+    position: sticky;
+    top: 0;
+    background: var(--app-bg, #192a7c);
+    padding: 1rem;
 }
 
 ul {
-	list-style-type: none;
+    list-style-type: none;
 }
 
 li {
-	margin: 2px 0;
+    margin: 2px 0;
 }
 
 img,
 video {
-	width: 80%;
+    width: 80%;
 }
 
 .folder,
 .file {
-	display: flex;
-	align-items: center;
-	padding: 8px 10px;
-	border-radius: 0.5rem;
-	gap: 4px;
-	cursor: pointer;
-	min-width: fit-content;
-	width: 100%;
-	color: rgba(255, 255, 255, 0.5);
-	transition: all 300ms ease-in-out;
-	white-space: nowrap;
-	/* Prevent text wrapping */
-	overflow: hidden;
-	text-overflow: ellipsis;
-	/* Add ellipsis for very long names */
+    display: flex;
+    align-items: center;
+    padding: 8px 10px;
+    border-radius: 0.5rem;
+    gap: 4px;
+    cursor: pointer;
+    min-width: fit-content;
+    width: 100%;
+    color: rgba(255, 255, 255, 0.5);
+    transition: all 300ms ease-in-out;
+    white-space: nowrap;
+    /* Prevent text wrapping */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    /* Add ellipsis for very long names */
 }
 
 .folder:hover,
 .file:hover {
-	background-color: rgba(255, 255, 255, 0.04);
+    background-color: rgba(255, 255, 255, 0.04);
 }
 
 .indent-1 li span {
-	padding-left: 36px;
+    padding-left: 36px;
 }
 
 .indent-2 li span {
-	padding-left: 48px;
+    padding-left: 48px;
 }
 
 .indent-3 li span {
-	padding-left: 60px;
+    padding-left: 60px;
 }
 
 .indent-4 li span {
-	padding-left: 80px;
+    padding-left: 80px;
 }
 
 .folder-icon,
 .file-icon {
-	display: inline-block;
-	width: 16px;
-	height: 16px;
-	margin-right: 5px;
-	background-size: contain;
-	background-repeat: no-repeat;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    margin-right: 5px;
+    background-size: contain;
+    background-repeat: no-repeat;
 }
 
 .folder-icon {
-	background-image: url('/icons/folder-closed.svg');
+    background-image: url('/icons/folder-closed.svg');
 }
 
 .folder-icon.open {
-	background-image: url('/icons/folder-open.svg');
+    background-image: url('/icons/folder-open.svg');
 }
 
 .file-icon {
-	background-image: url('/icons/file.svg');
+    background-image: url('/icons/file.svg');
 }
 
 /* Add specific file type icons */
 .file-icon.js {
-	background-image: url('/icons/javascript.svg');
+    background-image: url('/icons/javascript.svg');
 }
 
 .file-icon.ts {
-	background-image: url('/icons/typescript.svg');
+    background-image: url('/icons/typescript.svg');
 }
 
 .file-icon.html {
-	background-image: url('/icons/html.svg');
+    background-image: url('/icons/html.svg');
 }
 
 .file-icon.css {
-	background-image: url('/icons/css.svg');
+    background-image: url('/icons/css.svg');
 }
 
 .file-icon.scss {
-	background-image: url('/icons/sass.svg');
+    background-image: url('/icons/sass.svg');
 }
 
 .file-icon.json {
-	background-image: url('/icons/json.svg');
+    background-image: url('/icons/json.svg');
 }
 
 .file-icon.md {
-	background-image: url('/icons/markdown.svg');
+    background-image: url('/icons/markdown.svg');
 }
 
 .file-icon.jpg,
 .file-icon.jpeg,
 .file-icon.png,
 .file-icon.gif {
-	background-image: url('/icons/image.svg');
+    background-image: url('/icons/image.svg');
 }
 
 .file-icon.pdf {
-	background-image: url('/icons/pdf.svg');
+    background-image: url('/icons/pdf.svg');
 }
 
 .file-open {
-	background-color: rgba(255, 255, 255, 0.08);
-	color: #fff;
+    background-color: rgba(255, 255, 255, 0.08);
+    color: #fff;
 }
 
 .file-open:hover {
-	background-color: rgba(255, 255, 255, 0.1);
+    background-color: rgba(255, 255, 255, 0.1);
 }
 
 li>ul {
-	display: none;
+    display: none;
 }
 
 li.open>ul {
-	display: block;
+    display: block;
 }
 
 h3 {
-	margin-top: 0;
-	border-bottom: 1px solid #3f3f3f;
-	padding-bottom: 10px;
+    margin-top: 0;
+    border-bottom: 1px solid #3f3f3f;
+    padding-bottom: 10px;
 }
 
 pre {
-	background-color: #1e1e1e;
-	padding: 15px;
-	border-radius: 4px;
-	overflow-x: auto;
-	line-height: 1.5;
+    background-color: #1e1e1e;
+    padding: 15px;
+    border-radius: 4px;
+    overflow-x: auto;
+    line-height: 1.5;
 }
 
 code {
-	font-family: Fira Code, monospace;
-	font-size: 14px;
+    font-family: Fira Code, monospace;
+    font-size: 14px;
 }
 
 li.L1,
@@ -263,7 +263,7 @@ li.L3,
 li.L5,
 li.L7,
 li.L9 {
-	background: transparent !important;
+    background: transparent !important;
 }
 
 li.L0,
@@ -274,94 +274,94 @@ li.L5,
 li.L6,
 li.L7,
 li.L8 {
-	list-style-type: decimal !important;
+    list-style-type: decimal !important;
 }
 
 .loading {
-	display: inline-block;
-	width: 20px;
-	height: 20px;
-	border: 3px solid rgba(255, 255, 255, .3);
-	border-radius: 50%;
-	border-top-color: #fff;
-	animation: spin 1s ease-in-out infinite;
-	margin-left: 10px;
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255, 255, 255, .3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 1s ease-in-out infinite;
+    margin-left: 10px;
 }
 
 @keyframes spin {
-	to {
-		transform: rotate(360deg);
-	}
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 /* Custom theme for code-prettify */
 .prettyprint {
-	background-color: #1A2A7C !important;
-	font-family: Fira Code, monospace;
-	font-size: 12px !important;
-	border: none;
-	padding: 15px;
-	line-height: 1.5;
-	padding: 0 2rem !important;
-	height: -webkit-fill-available;
+    background-color: var(--app-bg, #1A2A7C) !important;
+    font-family: Fira Code, monospace;
+    font-size: 12px !important;
+    border: none;
+    padding: 15px;
+    line-height: 1.5;
+    padding: 0 2rem !important;
+    height: -webkit-fill-available;
 }
 
 .linenums {
-	width: fit-content;
+    width: fit-content;
 }
 
 .linenums>li {
-	width: max-content;
+    width: max-content;
 }
 
 pre.prettyprint {
-	border: none !important;
+    border: none !important;
 }
 
 /* Plain text */
 .pln {
-	color: #B1C1FF !important;
+    color: #B1C1FF !important;
 }
 
 /* Strings */
 .str {
-	color: #64FF99 !important;
+    color: #64FF99 !important;
 }
 
 /* Keywords */
 .kwd {
-	color: #FFA07A !important;
+    color: #FFA07A !important;
 }
 
 /* Comments */
 .com {
-	color: #3069BF !important;
+    color: #3069BF !important;
 }
 
 /* Types */
 .typ {
-	color: #4ec9b0 !important;
+    color: #4ec9b0 !important;
 }
 
 /* Literals */
 .lit {
-	color: #77EFFF !important;
+    color: #77EFFF !important;
 }
 
 /* Punctuation */
 .pun {
-	color: #B1C1FF !important;
+    color: #B1C1FF !important;
 }
 
 /* Functions */
 .fun {
-	color: #dcdcaa !important;
+    color: #dcdcaa !important;
 }
 
 /* Operators */
 .opn,
 .clo {
-	color: #d4d4d4 !important;
+    color: #d4d4d4 !important;
 }
 
 /* Line Numbers */
@@ -375,156 +375,231 @@ li.L6,
 li.L7,
 li.L8,
 li.L9 {
-	color: rgba(255, 255, 255, 0.2) !important;
+    color: rgba(255, 255, 255, 0.2) !important;
 }
 
 /* Add this to your existing CSS */
 
 @keyframes slideIn {
-	from {
-		transform: translateX(-20px);
-		opacity: 0;
-	}
+    from {
+        transform: translateX(-20px);
+        opacity: 0;
+    }
 
-	to {
-		transform: translateX(0);
-		opacity: 1;
-	}
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
 }
 
 .folder>ul {
-	display: none;
+    display: none;
 }
 
 .folder-open>ul {
-	display: block;
+    display: block;
 }
 
 .folder-open>.folder {
-	color: #fff;
+    color: #fff;
 }
 
 .folder-open>ul>li {
-	animation: slideIn 0.3s ease-out forwards;
-	opacity: 0;
+    animation: slideIn 0.3s ease-out forwards;
+    opacity: 0;
 }
 
 /* Stagger the animation for each item */
 .folder-open>ul>li:nth-child(1) {
-	animation-delay: 0s;
+    animation-delay: 0s;
 }
 
 .folder-open>ul>li:nth-child(2) {
-	animation-delay: 0.05s;
+    animation-delay: 0.05s;
 }
 
 .folder-open>ul>li:nth-child(3) {
-	animation-delay: 0.1s;
+    animation-delay: 0.1s;
 }
 
 .folder-open>ul>li:nth-child(4) {
-	animation-delay: 0.15s;
+    animation-delay: 0.15s;
 }
 
 .folder-open>ul>li:nth-child(5) {
-	animation-delay: 0.2s;
+    animation-delay: 0.2s;
 }
 
 .toolbar {
-	padding: 8px 16px;
-	display: flex;
-	align-items: center;
-	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-	padding: 1rem 1.5rem;
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1rem 1.5rem;
 }
 
 .toolbar .buttons {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	position: absolute;
-	left: 50%;
-	transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 .toolbar button {
-	background-color: #1E3187;
-	/* Slightly lighter blue for the active button */
-	color: white;
-	border: none;
-	padding: 6px 16px;
-	border-radius: 4px;
-	font-size: 14px;
-	cursor: pointer;
-	transition: background-color 0.3s ease;
-	font-family: Fira Code, monospace;
-	font-size: 12px;
-	letter-spacing: 0.05em;
-	text-transform: uppercase;
+    background-color: #1E3187;
+    /* Slightly lighter blue for the active button */
+    color: white;
+    border: none;
+    padding: 6px 16px;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-family: Fira Code, monospace;
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
 }
 
 .toolbar button:not(.active) {
-	background-color: transparent;
-	color: rgba(255, 255, 255, 0.6);
+    background-color: transparent;
+    color: rgba(255, 255, 255, 0.6);
 }
 
 .toolbar button:hover:not(.active) {
-	background-color: rgba(255, 255, 255, 0.05);
+    background-color: rgba(255, 255, 255, 0.05);
 }
 
 .toolbar p {
-	font-size: 12px;
-	font-weight: 500;
+    font-size: 12px;
+    font-weight: 500;
 }
 
 
 .helper-container {
-	padding: 20px;
-	text-align: center;
-	font-family: 'Inter', sans-serif;
-	color: #B1C1FF;
-	max-width: 600px;
-	margin: 0 auto;
+    padding: 20px;
+    text-align: center;
+    font-family: 'Inter', sans-serif;
+    color: #B1C1FF;
+    max-width: 600px;
+    margin: 0 auto;
 
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 
-	h2 {
-		margin-bottom: 20px;
-		color: #64FF99;
-	}
+    h2 {
+        margin-bottom: 20px;
+        color: #64FF99;
+    }
 
-	p {
-		margin-bottom: 20px;
-	}
+    p {
+        margin-bottom: 20px;
+    }
 
-	ul {
-		list-style-type: none;
-		padding: 0;
-		margin-bottom: 20px;
+    ul {
+        list-style-type: none;
+        padding: 0;
+        margin-bottom: 20px;
 
-		li {
-			margin-bottom: 10px;
+        li {
+            margin-bottom: 10px;
 
-			strong {
-				color: #FFA07A;
-			}
-		}
-	}
+            strong {
+                color: #FFA07A;
+            }
+        }
+    }
 
-	code {
-		display: block;
-		background-color: #1E3187;
-		padding: 15px;
-		border-radius: 5px;
-		word-break: break-all;
-		font-family: 'Fira Code', monospace;
-		font-size: 12px;
+    code {
+        display: block;
+        background-color: rgba(255, 255, 255, 0.1);
+        padding: 15px;
+        border-radius: 5px;
+        word-break: break-all;
+        font-family: 'Fira Code', monospace;
+        font-size: 12px;
 
-	}
+    }
 
 
 
+}
+
+.repository-input {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: center;
+    align-items: stretch;
+    margin-top: 16px;
+}
+
+.repository-input input {
+    width: 420px;
+    max-width: 100%;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 6px;
+    padding: 10px 12px;
+    color: rgba(255, 255, 255, 0.9);
+    font-family: 'Fira Code', monospace;
+    font-size: 12px;
+    outline: none;
+}
+
+.repository-input input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+#loadRepoButton {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: none;
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-family: Fira Code, monospace;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+#loadRepoButton:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
+#repoLoadError {
+    min-height: 18px;
+    margin-top: 10px;
+    color: #FFA07A;
+    font-size: 12px;
+}
+
+.theme-options {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    margin-top: 12px;
+}
+
+.theme-options label {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.theme-options input[type="color"] {
+    width: 44px;
+    height: 32px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 6px;
+    background: transparent;
+    padding: 2px;
+    cursor: pointer;
 }

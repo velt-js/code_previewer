@@ -2,43 +2,55 @@
 <html lang="en">
 
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Code Preview</title>
-	<link rel="stylesheet" href="./style.css">
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/skins/sunburst.css">
-	<script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Preview</title>
+    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/skins/sunburst.css">
+    <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
 </head>
 
 <body>
-	<div id="app">
-		<div class="toolbar">
-			<p>Repository</p>
-			<div class="buttons">
-				<button onclick="showCode()">Code</button>
-				<button class="active" onclick="showPreview()">PREVIEW</button>
-			</div>
-		</div>
-		<div class="content">
-			<div class="helper-container">
-				<h2>Welcome to Code Preview</h2>
-				<p>To use this tool, please provide the following URL parameters:</p>
-				<ul>
-					<li><strong>github</strong>: URL of the GitHub repository</li>
-					<li><strong>preview</strong>: URL of the preview page</li>
-					<li><strong>hideToolbar</strong> (optional): Set to 'true' to hide the toolbar</li>
-					<li><strong>selectedTab</strong> (optional): Set to 'Code' or 'Preview' to select the initial tab
-					</li>
-				</ul>
-				<p>Example URL:</p>
-				<code>https://yourpage.com?github=https://github.com/user/repo&preview=https://preview-url.com&hideToolbar=true&selectedTab=Code</code>
-			</div>
-			<div id="repoStructure" class="scrollable-content"></div>
-			<div id="codeBlock" class="scrollable-content"></div>
-			<iframe id="previewFrame" allow="microphone; camera; display-capture"></iframe>
-		</div>
-	</div>
-	<script src="./index.js"></script>
+    <div id="app">
+        <div class="toolbar">
+            <p>Repository</p>
+            <div class="buttons">
+                <button onclick="showCode()">Code</button>
+                <button class="active" onclick="showPreview()">PREVIEW</button>
+            </div>
+        </div>
+        <div class="content">
+            <div class="helper-container">
+                <h2>Welcome to Code Preview</h2>
+                <p>To use this tool, you can provide the following URL parameters (or use the inputs below):</p>
+                <ul>
+                    <li><strong>github</strong> (optional): URL of the GitHub repository</li>
+                    <li><strong>preview</strong> (optional): URL of the preview/output page</li>
+                    <li><strong>hideToolbar</strong> (optional): Set to 'true' to hide the toolbar</li>
+                    <li><strong>selectedTab</strong> (optional): Set to 'Code' or 'Preview' to select the initial tab
+                    </li>
+                    <li><strong>themeColor</strong> (optional): Hex color like '1A2A7C'</li>
+                </ul>
+                <p>Example URL:</p>
+                <code>https://yourpage.com?github=https://github.com/user/repo&preview=https://preview-url.com&hideToolbar=true&selectedTab=Code&themeColor=1A2A7C</code>
+
+                <div class="repository-input">
+                    <input id="repoUrlInput" type="text" placeholder="Enter the URL of the GitHub repository">
+                    <input id="previewUrlInput" type="text" placeholder="Enter the preview/output URL (optional)">
+                </div>
+                <div class="theme-options">
+                    <label for="themeColorInput">Theme color</label>
+                    <input id="themeColorInput" type="color" value="#1A2A7C">
+                </div>
+                <button id="loadRepoButton" type="button">Load</button>
+                <p id="repoLoadError"></p>
+            </div>
+            <div id="repoStructure" class="scrollable-content"></div>
+            <div id="codeBlock" class="scrollable-content"></div>
+            <iframe id="previewFrame" allow="microphone; camera; display-capture"></iframe>
+        </div>
+    </div>
+    <script src="./index.js"></script>
 </body>
 
 </html>
